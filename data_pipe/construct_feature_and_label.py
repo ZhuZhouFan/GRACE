@@ -21,7 +21,7 @@ def extract_data(stock_name,
                  data_path):
     
     stock_df = pd.read_csv(f'{data_path}/{stock_name}.csv', index_col='date')
-    stock_df['label'] = np.log(stock_df['close'].shift(-1 * horizon)/stock_df['close'] + 1e-6)
+    stock_df['label'] = stock_df['close'].shift(-1 * horizon)/stock_df['close'] - 1
     # stock_df['total_turnover'] = np.log(stock_df['total_turnover'] + 1e-6)
     # stock_df['volume'] = np.log(stock_df['volume'] + 1e-6)
     # stock_df['a_share_market_val_in_circulation'] = np.log(stock_df['a_share_market_val_in_circulation'] + 1e-6)
