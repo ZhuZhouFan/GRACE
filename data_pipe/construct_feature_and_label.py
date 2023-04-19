@@ -39,12 +39,11 @@ def extract_data(stock_name,
     
     feature.fillna(method = 'ffill', inplace=True)
     feature.fillna(0.0, inplace=True)
-    
     feature = feature.loc[previous_date:date, :]
     
     try:
         label = stock_df.at[date, 'label']
-        if np.isnan(label):
+        if (np.isnan(label)) or (np.isinf(label)):
             label = 0.0
     except KeyError as e:
         label = 0.0
@@ -78,7 +77,7 @@ def one_day(date, data_path, save_path, horizon, lag_order, index_components_df,
 
 data_path = '/data/GRACE_data/A_share'
 start_time = '2015-01-01'
-end_time = '2023-04-01'
+end_time = '2023-03-01'
 lag_order = 16
 P = 10
 horizon = 1

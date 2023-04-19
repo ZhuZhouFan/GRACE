@@ -8,6 +8,7 @@ class GraphModule(nn.Module):
                  batch_size:int,
                  fea_shape:int,
                  rel_encoding:np.array,
+                 rel_mask:np.array,
                  inner_prod = False):
         """Graph convolution module
 
@@ -15,6 +16,7 @@ class GraphModule(nn.Module):
             batch_size (int): batch_size
             fea_shape (int): the length of embedding computed by LSTM
             rel_encoding (np.array): the encoding of relation
+            rel_mask (np.array): masked signal
             inner_prod (bool, optional): whether inner product the weights. Defaults to False.
         """        
         super().__init__()
@@ -22,6 +24,7 @@ class GraphModule(nn.Module):
         self.input_shape = fea_shape
         self.inner_prod = inner_prod
         self.relation = torch.tensor(rel_encoding, dtype=torch.float32, requires_grad=False)
+        self.rel_mask = torch.tensor(rel_mask, dtype=torch.float32, requires_grad=False)
         self.all_one = torch.ones(self.batch_size, 1, dtype=torch.float32, requires_grad=False)
         self.rel_weight = nn.Linear(rel_encoding.shape[2], 1)
         if self.inner_prod is False:
@@ -39,8 +42,8 @@ class GraphModule(nn.Module):
             tail_weight = self.tail_weight(inputs)
             weight = (head_weight @ all_one.t().contiguous() +
                       all_one @ tail_weight.t().contiguous()) + rel_weight[:, :, -1]
-        normalized_weight = F.softmax(weight, dim=0)
-        outputs = normalized_weight @ inputs
+        weight_masked = F.softmax(self.rel_mask + weight, dim=0)
+        outputs = weight_masked @ inputs
         return outputs
 
 
@@ -49,6 +52,7 @@ class Graph_Network(nn.Module):
                  feature_dim:int,
                  batch_size:int,
                  rel_encoding:np.array,
+                 rel_mask:np.array, 
                  units:int = 64,
                  inner_prod = False):
         super().__init__()
@@ -58,6 +62,7 @@ class Graph_Network(nn.Module):
         self.graph_layer = GraphModule(batch_size = batch_size,
                                        fea_shape = units,
                                        rel_encoding = rel_encoding,
+                                       rel_mask = rel_mask, 
                                        inner_prod = inner_prod)
         self.fc = nn.Linear(units * 2, 1)
 
