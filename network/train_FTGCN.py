@@ -2,7 +2,7 @@ import torch
 import pandas as pd
 import numpy as np
 import argparse
-
+from load_data import load_FF5_augmented_relation_data
 from FTGCN import FTGCN_Agent
 
 parser = argparse.ArgumentParser()
@@ -35,22 +35,20 @@ parser.add_argument('--hidden', type=int, default=64,
 ## Saving, loading etc. ##
 parser.add_argument('--cuda', type=int, default=0,
                     help='Number of device training on.')
-parser.add_argument('--save-folder', type=str, default='/data/GRACE_data/A_share/FTGCN_model',
+parser.add_argument('--market', type=str, default='NASDAQ',
+                    help='Which dataset is used for training.')
+parser.add_argument('--rel', type=str, default='wikidata',
+                    help='Which relation data is used for training.')
+parser.add_argument('--save-folder', type=str, default='/data/GRACE_data/overseas/FTGCN_model',
                     help='Where to save the trained model, leave empty to not save anything.')
-parser.add_argument('--start-time', type=str, default='2015-01-01',
+parser.add_argument('--start-time', type=str, default='2013-01-02',
                     help='The beginning of training dataset')
-parser.add_argument('--valid-time', type=str, default='2019-01-01',
+parser.add_argument('--valid-time', type=str, default='2015-12-31',
                     help='The ending of training dataset')
-parser.add_argument('--end-time', type=str, default='2021-01-01',
+parser.add_argument('--end-time', type=str, default='2016-12-30',
                     help='The ending of ending dataset')
 
 args = parser.parse_args()
-
-lag_order = 16
-P = 10
-N = 1682 + 5
-root_dir = '/data/GRACE_data/A_share'
-data_path = f'{root_dir}/tensors/FF5/lag_{lag_order}_horizon_1'
 
 torch.cuda.set_device(args.cuda)
 start_time = args.start_time
@@ -59,10 +57,23 @@ end_time = args.end_time
 log_dir = args.save_folder
 tau = args.tau
 num_workers = args.workers
+market_name = args.market
+relation_name = args.rel
 
-rel_encoding = np.load(f'{root_dir}/factor_augmented_sector_ind_graph.npy')
+root_dir = '/data/GRACE_data/overseas'
+tickers_fname = market_name + '_tickers_qualify_dr-0.98_min-5_smooth.csv'
+tickers = np.genfromtxt(f'{root_dir}/{tickers_fname}', dtype=str, delimiter='\t', skip_header=False)
+tickers = np.hstack([tickers, ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']])
 
-log_dir_ = f'{log_dir}/hidden_{args.hidden}_lag_{lag_order}_horizon_1_seed_{args.seed}/{tau}'
+lag_order = 16
+P = 10
+N = len(tickers)
+data_path = f'{root_dir}/tensors/{market_name}'
+rname_tail = {'sector_industry': '_industry_relation.npy', 'wikidata': '_wiki_relation.npy'}
+
+rel_encoding = load_FF5_augmented_relation_data(f'{root_dir}/relation/{args.rel}/{market_name}{rname_tail[relation_name]}')
+
+log_dir_ = f'{log_dir}/{market_name}/hidden_{args.hidden}_lag_{lag_order}_horizon_1_seed_{args.seed}/{tau}'
 
 agent = FTGCN_Agent(individual_num=N,
                        feature_dim=P,

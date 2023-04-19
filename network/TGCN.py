@@ -85,7 +85,7 @@ class TGCN_Agent(object):
               tau: float = 0.5):
         
         if mse_loss:
-            all_one = torch.ones(self.stock_num, 1,
+            all_one = torch.ones(self.individual_num, 1,
                                  dtype=torch.float32,
                                  requires_grad=False).to(self.device)
         

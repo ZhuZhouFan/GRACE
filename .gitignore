@@ -1,5 +1,8 @@
-preprocess.ipynb
 .vscode
 GRACE.code-workspace
+
 old_version
-data_pipe
+A_share_data_pipe
+network/__pycache__
+data_pipe/__pycache__
+data_pipe/preprocess.ipynb
