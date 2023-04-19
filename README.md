@@ -12,14 +12,14 @@ The price and volume Data of each stock, sector-industry relation data, and wiki
 In the meanwhile, the daily Fama French five factors could be downloaded from the homepage of Kenneth R. French; see [\[factor data\]](https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html).
 
 ## data_pipe
-| Script | Function |
+| Script | Usage |
 | :-----------: | :-----------: |
 | compute_factor_loading.py | To calculate factor loadings from raw End-of-day data and factor data|
 | construct_feature.py | Generate the network input (including lagged values) for each day|
 | construct_label.py | Generate the label for each day|
 
 ## network
-| Script | Function |
+| Script | Usage |
 | :-----------: | :-----------: |
 | model.py | The model specification of network |
 | my_dataset.py | The dataset specification based on Pytorch |
