@@ -10,9 +10,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     ## arguments related to training ##
     parser.add_argument('--epochs', type=int, default=1000,
-                        help='Number of epochs to train.')
-    parser.add_argument('--lr', type=float, default=5e-4,
-                        help='Initial learning rate.')
+                        help='Number of epochs to train')
+    parser.add_argument('--lr', type=float, default=1e-3,
+                        help='Learning rate')
     parser.add_argument('--patience', type=int, default=30,
                         help='Early stopping patience')
     parser.add_argument('--workers', type=int, default=3,
@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('--tau', type=float, default=0.5,
                         help='Quantile level')
     parser.add_argument('--lam', type=float, default=0.1,
-                        help='tuning parameter for rank loss.')
+                        help='Tuning parameter for rank loss')
     
     ## arguments related to weight and bias initialisation ##
     parser.add_argument('--seed', type=int, default=42,
@@ -32,21 +32,21 @@ if __name__ == '__main__':
     
     ## arguments related to changing the model ##
     parser.add_argument('--hidden', type=int, default=64,
-                        help='Number of hidden units in encoder.')
+                        help='Number of hidden units in encoder')
     
     ## Saving, loading etc. ##
     parser.add_argument('--cuda', type=int, default=0,
-                        help='Number of device training on.')
+                        help='Number of device training on')
     parser.add_argument('--market', type=str, default='NASDAQ',
-                        help='Which dataset is used for training.')
+                        help='Which dataset is used for training')
     parser.add_argument('--rel', type=str, default='wikidata',
-                        help='Which relation data is used for training.')
+                        help='Which relation data is used for training')
     parser.add_argument('--start-time', type=str, default='2013-01-02',
-                        help='The beginning of training dataset')
+                        help='Training dataset start time')
     parser.add_argument('--valid-time', type=str, default='2015-12-31',
-                        help='The ending of training dataset')
+                        help='Training dataset end time (i.e., Validation dataset start time)')
     parser.add_argument('--end-time', type=str, default='2016-12-30',
-                        help='The ending of ending dataset')
+                        help='Validation dataset end time')
     
     args = parser.parse_args()
     
@@ -54,13 +54,12 @@ if __name__ == '__main__':
     start_time = args.start_time
     valid_time = args.valid_time
     end_time = args.end_time
-    log_dir = args.save_folder
     tau = args.tau
     num_workers = args.workers
     market_name = args.market
     relation_name = args.rel
     
-    root_dir = '/home/zfzhu/Documents/GRACE_data'
+    root_dir = 'Specify/Your/Data/Path/Here'
     tickers_fname = market_name + '_tickers_qualify_dr-0.98_min-5_smooth.csv'
     tickers = np.genfromtxt(f'{root_dir}/{tickers_fname}', dtype=str, delimiter='\t', skip_header=False)
     

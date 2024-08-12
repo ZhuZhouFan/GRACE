@@ -23,6 +23,7 @@ def isnumber(x):
         return True
     except:
         return False
+
     
 def load_model_weights(tau:float,
                        N:int,
@@ -90,12 +91,12 @@ def inference(N:int,
             date = date_array[i]
             feature_tensor = np.load(f'{tensor_path}/{date}/feature.npy')
             X = torch.Tensor(feature_tensor).to(device)
-            network_output = network.forward(X)
+            network_output = network.forward(X[:N, :, :])
 
             result_dict[date][tau] = network_output.cpu().numpy()
             try:
                 label_tensor = np.load(f'{tensor_path}/{date}/label.npy')
-                result_dict[date]['ground_truth'] = label_tensor[:, 0]
+                result_dict[date]['ground_truth'] = label_tensor[:N, 0]
             except FileNotFoundError:
                 result_dict[date]['ground_truth'] = np.nan
 
@@ -140,11 +141,11 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--cuda', type=int, default=0,
-                        help='id of device training on.')
+                        help='Id of device to use')
     parser.add_argument('--market', type=str, default='NASDAQ',
-                        help='which market dataset is used for training.')
+                        help='Which market dataset is used for training')
     parser.add_argument('--rel', type=str, default='wikidata',
-                        help='which relation data is used for training.')
+                        help='Which relation data is used for training')
     parser.add_argument('--train-start-time', type=str, default='2013-01-02',
                         help='Training dataset start time')
     parser.add_argument('--train-end-time', type=str, default='2016-12-30',
@@ -164,7 +165,7 @@ if __name__ == '__main__':
     train_end_time = args.train_end_time
     infer_end_time = args.infer_end_time
 
-    data_path = '/home/zfzhu/Documents/GRACE_data'
+    data_path = 'Specify/Your/Data/Path/Here'
     model_path = f'{data_path}/TGCN_model/{args.market}_{args.rel}/{train_start_time}_{train_end_time}/hidden_{hidden_dim}_lag_{lag_order}_horizon_1_seed_42'
     tensor_path = f'{data_path}/tensors/{args.market}'
     moment_path = f'{data_path}/TGCN_moment/{args.market}_{args.rel}/{train_start_time}_{train_end_time}_{infer_end_time}/hidden_{hidden_dim}_lag_{lag_order}_horizon_1_seed_42'
@@ -199,24 +200,24 @@ if __name__ == '__main__':
                                        date_array, tau_list, stock_list,
                                        model_path, tensor_path)
 
-    valid_tau_path = f'{moment_path}/valid_tau'
-    if not os.path.exists(valid_tau_path):
-        os.makedirs(valid_tau_path)
+    # valid_tau_path = f'{moment_path}/valid_tau'
+    # if not os.path.exists(valid_tau_path):
+    #     os.makedirs(valid_tau_path)
 
     for stock_name in tqdm(stock_list, desc='QCM regression'):
         
         try:
-            df, selected_tau_list = compute_QCM_table(stock_name,
+            moments_df, selected_tau_list = compute_QCM_table(stock_name,
                                                       inference_df,
                                                       tau_list,
-                                                      tolerance=20,
+                                                      tolerance=3,
                                                       size=args.size,
-                                                      train_start_time=train_start_time,
-                                                      train_end_time=train_end_time)
-            if (df is None) or (selected_tau_list is None):
+                                                      start_time=train_start_time,
+                                                      valid_time=train_end_time)
+            if (moments_df is None) or (selected_tau_list is None):
                 continue
             else:
-                df.to_csv(f'{moment_path}/{stock_name}.csv')
-                np.save(f'{valid_tau_path}/{stock_name}.npy', selected_tau_list)
+                moments_df.to_csv(f'{moment_path}/{stock_name}.csv')
+                # np.save(f'{valid_tau_path}/{stock_name}.npy', selected_tau_list)
         except Exception as e:
             print(f'{stock_name} {e}')

@@ -10,43 +10,43 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     ## arguments related to training ##
     parser.add_argument('--epochs', type=int, default=1000,
-                        help='number of epochs to train.')
+                        help='Number of epochs to train')
     parser.add_argument('--lr', type=float, default=1e-3,
-                        help='learning rate.')
+                        help='Learning rate')
     parser.add_argument('--patience', type=int, default=30,
-                        help='early stopping patience')
+                        help='Early stopping patience')
     parser.add_argument('--workers', type=int, default=3,
-                        help='number of workers in Dataloader')
+                        help='Number of workers in Dataloader')
     
     ## arguments related to loss function ##
     parser.add_argument('--mse-loss', action='store_true', default=False,
-                        help='use the MSE as the loss function')
+                        help='Use the MSE as the loss function')
     parser.add_argument('--tau', type=float, default=0.5,
-                        help='quantile level')
+                        help='Quantile level')
     parser.add_argument('--lam', type=float, default=0.1,
-                        help='tuning parameter for rank loss.')
+                        help='Tuning parameter for rank loss')
     
     ## arguments related to weight and bias initialisation ##
     parser.add_argument('--seed', type=int, default=42,
-                        help='random seed.')
+                        help='Random seed')
     
     ## arguments related to changing the model ##
     parser.add_argument('--hidden', type=int, default=64,
-                        help='dimensionality of hidden state.')
+                        help='Dimensionality of hidden state')
     
     ## Saving, loading etc. ##
     parser.add_argument('--cuda', type=int, default=0,
-                        help='id of device training on.')
+                        help='Id of device training on')
     parser.add_argument('--market', type=str, default='NASDAQ',
-                        help='which dataset is used for training.')
+                        help='Which dataset is used for training')
     parser.add_argument('--rel', type=str, default='wikidata',
-                        help='which relation data is used for training.')
+                        help='Which relation data is used for training')
     parser.add_argument('--start-time', type=str, default='2013-01-02',
-                        help='beginning of training dataset')
+                        help='Training dataset start time')
     parser.add_argument('--valid-time', type=str, default='2015-12-31',
-                        help='ending of training dataset')
+                        help='Training dataset end time (i.e., Validation dataset start time)')
     parser.add_argument('--end-time', type=str, default='2016-12-30',
-                        help='ending of validation dataset')
+                        help='Validation dataset end time')
     
     args = parser.parse_args()
     
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     market_name = args.market
     relation_name = args.rel
     
-    root_dir = '/home/zfzhu/Documents/GRACE_data'
+    root_dir = 'Specify/Your/Data/Path/Here'
     tickers_fname = market_name + '_tickers_qualify_dr-0.98_min-5_smooth.csv'
     tickers = np.genfromtxt(f'{root_dir}/{tickers_fname}', dtype=str, delimiter='\t', skip_header=False)
     tickers = np.hstack([tickers, ['Mkt-RF', 'SMB', 'HML', 'RMW', 'CMA']])

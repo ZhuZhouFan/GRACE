@@ -47,7 +47,7 @@ if __name__ == '__main__':
                         help='The number of process.')
     args = parser.parse_args()
 
-    data_path:str = 'Your/Data/Path'
+    data_path:str = 'Specify/Your/Data/Path/Here'
     FF5_df = pd.read_csv(f'{data_path}/Fama_French_daily.csv')
     ymd = pd.to_datetime(FF5_df['date'], format='%Y%m%d')
     FF5_df['date'] = ymd.apply(lambda x: f'{x.year}-{x.month:02d}-{x.day:02d}')

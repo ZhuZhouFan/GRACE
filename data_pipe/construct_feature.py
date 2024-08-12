@@ -79,16 +79,16 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--market', type=str, default='NASDAQ',
-                        help='The market name (NASDAQ or NYSE)')
+                        help='Market name (NASDAQ or NYSE)')
     parser.add_argument('--start-time', type=str, default='2013-01-02',
                         help='Dataset start time')
     parser.add_argument('--end-time', type=str, default='2017-12-08',
                         help='Dataset end time')
     parser.add_argument('--worker', type=int, default=75,
-                        help='The number of process.')
+                        help='Number of processes to use')
     args = parser.parse_args()
 
-    data_path = '/home/zfzhu/Documents/GRACE_data'
+    data_path = 'Specify/Your/Data/Path/Here'
     market_name = args.market
     start_time = args.start_time
     end_time = args.end_time
