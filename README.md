@@ -39,22 +39,22 @@ This repository contains the pre-release code for the (F)TGCN-based quantile and
 # Ensure you have updated the data path and log directory in each file.
 
 # Step 1: Construct features and labels
-python compute_factor_loading.py
-python construct_feature.py
-python construct_label.py
+python data_pipe/compute_factor_loading.py
+python data_pipe/construct_feature.py
+python data_pipe/construct_label.py
 
 # Step 2: Train models
 # Mean model 
-python train_FTGCN.py --tau 0.0 --mse-loss --lam 0.1 
+python network/train_FTGCN.py --tau 0.0 --mse-loss --lam 0.1 
 # Quantile models
-python train_FTGCN.py --tau 0.005 --lam 0.1 
-python train_FTGCN.py --tau 0.01 --lam 0.1 
+python network/train_FTGCN.py --tau 0.005 --lam 0.1 
+python network/train_FTGCN.py --tau 0.01 --lam 0.1 
 ...
-python train_FTGCN.py --tau 0.99 --lam 0.1 
-python train_FTGCN.py --tau 0.995 --lam 0.1
+python network/train_FTGCN.py --tau 0.99 --lam 0.1 
+python network/train_FTGCN.py --tau 0.995 --lam 0.1
 
 # Step 3: Inference and QCM learning
-python inference_FTGCN.py
+python network/inference_FTGCN.py
 ```
 
 ## Cite
